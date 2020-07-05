@@ -1,16 +1,17 @@
 PROJECT_NAME     := vesc_uart_ble
-TARGETS          := nrf51822_xxac
+TARGETS          := nrf51822_xxaa
 OUTPUT_DIRECTORY := _build
 
 # So that eclipse can use the build output for indexing.
 VERBOSE=1
 
 # Use FW for 16k ram with limited functionality
-FW_16K ?= 0
+FW_16K ?= 1
 
 CFLAGS += $(build_args)
 
-SDK_ROOT := /home/benjamin/Dokument/nrf51822/sdk
+SDK_ROOT := /home/robot/nRF5_SDK_12
+
 PROJ_DIR := .
 
 SD_PATH := $(SDK_ROOT)/components/softdevice/s130/hex/s130_nrf51_2.0.1_softdevice.hex
@@ -20,7 +21,7 @@ ifeq ($(FW_16K),0)
 $(OUTPUT_DIRECTORY)/nrf51822_xxac.out: \
   LINKER_SCRIPT  := ble_app_uart_gcc_nrf51.ld
 else
-$(OUTPUT_DIRECTORY)/nrf51822_xxac.out: \
+$(OUTPUT_DIRECTORY)/nrf51822_xxaa.out: \
   LINKER_SCRIPT  := ble_app_uart_gcc_nrf51_16k.ld
 endif
 
@@ -64,6 +65,8 @@ SRC_FILES += \
   $(PROJ_DIR)/crc.c \
   $(PROJ_DIR)/packet.c \
   $(PROJ_DIR)/buffer.c
+  
+
   
 ifeq ($(FW_16K),0)
 SRC_FILES += $(PROJ_DIR)/esb_timeslot.c
@@ -179,6 +182,7 @@ INC_FOLDERS += \
 
 # Libraries common to all targets
 LIB_FILES += \
+
 
 # C flags common to all targets
 CFLAGS += -DBOARD_PCA10028

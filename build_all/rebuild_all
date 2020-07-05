@@ -6,10 +6,10 @@ FWPATH=$DIR/../
 
 cd $FWPATH
 make clean
-make -j8 FW_16K=1 build_args='-DMODULE_TRAMPA=0 -DMODULE_BUILTIN=0 -DMODULE_WT=0'
+make -j8 FW_16K=1 build_args='-DMODULE_BKB=1 -DMODULE_BUILTIN=0 -DMODULE_WT=0'
 make FW_16K=1 merge_hex
 cd $DIR
-cp $FWPATH/hex/merged.bin nrf51_vesc_ble_16k_16m_rx11_tx9_led3.bin
+cp $FWPATH/hex/merged.bin bkbnrf51_vesc_ble_16k_16m_rx11_tx9_led3.bin
 
 cd $FWPATH
 make clean
@@ -18,26 +18,6 @@ make FW_16K=1 merge_hex
 cd $DIR
 cp $FWPATH/hex/merged.bin nrf51_vesc_ble_16k_16m_rx1_tx2_led3.bin
 
-cd $FWPATH
-make clean
-make -j8 FW_16K=0 build_args='-DMODULE_TRAMPA=0 -DMODULE_BUILTIN=0 -DMODULE_WT=0'
-make FW_16K=0 merge_hex
-cd $DIR
-cp $FWPATH/hex/merged.bin nrf51_vesc_ble_32k_16m_rx11_tx9_led3.bin
-
-cd $FWPATH
-make clean
-make -j8 FW_16K=0 build_args='-DMODULE_TRAMPA=1 -DMODULE_BUILTIN=0 -DMODULE_WT=0'
-make FW_16K=0 merge_hex
-cd $DIR
-cp $FWPATH/hex/merged.bin nrf51_vesc_ble_32k_32m_rx2_tx1_led3.bin
-
-cd $FWPATH
-make clean
-make -j8 FW_16K=0 build_args='-DMODULE_TRAMPA=0 -DMODULE_BUILTIN=1 -DMODULE_WT=0'
-make FW_16K=0 merge_hex
-cd $DIR
-cp $FWPATH/hex/merged.bin nrf51_vesc_ble_32k_32m_rx1_tx2_led3.bin
 
 # Clean
 cd $FWPATH

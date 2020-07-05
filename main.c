@@ -70,8 +70,8 @@ do                                                      \
 
 #define PRINT_EN						0
 
-#ifndef MODULE_TRAMPA
-#define MODULE_TRAMPA					0
+#ifndef MODULE_BKB
+#define MODULE_BKB						0
 #endif
 
 #ifndef MODULE_BUILTIN
@@ -82,9 +82,9 @@ do                                                      \
 #define MODULE_WT						0
 #endif
 
-#if MODULE_TRAMPA
-#define UART_RX							2
-#define UART_TX							1
+#if MODULE_BKB
+#define UART_RX							9
+#define UART_TX							11
 #define UART_TX_DISABLED				25
 #define EN_DEFAULT						1
 #define LED_PIN							3
@@ -110,9 +110,9 @@ do                                                      \
 
 // https://devzone.nordicsemi.com/question/59389/solved-help-with-wgt51822-s2-module/
 #undef NRF_CLOCK_LFCLKSRC
-#define NRF_CLOCK_LFCLKSRC      {.source        = NRF_CLOCK_LF_SRC_SYNTH,           \
+#define NRF_CLOCK_LFCLKSRC      {.source        = NRF_CLOCK_LF_SRC_XTAL,           \
                                  .rc_ctiv       = 0,                                \
-                                 .rc_temp_ctiv  = 0,                                \
+                                .rc_temp_ctiv  = 0,                                \
                                  .xtal_accuracy = NRF_CLOCK_LF_XTAL_ACCURACY_20_PPM}
 
 // Defines
@@ -130,7 +130,7 @@ do                                                      \
 #if MODULE_BUILTIN
 #define DEVICE_NAME                     "VESC BUILTIN BLE"
 #else
-#define DEVICE_NAME                     "VESC BLE UART"
+#define DEVICE_NAME                     "BKB NRF51 BLE"
 #endif
 
 #define NUS_SERVICE_UUID_TYPE           BLE_UUID_TYPE_VENDOR_BEGIN                  /**< UUID type for the Nordic UART Service (vendor specific). */
@@ -308,6 +308,7 @@ static void on_ble_evt(ble_evt_t * p_ble_evt) {
 	case BLE_GAP_EVT_CONNECTED:
 		m_conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
 		my_printf("Connected\r\n");
+		nrf_gpio_cfg_output(LED_PIN);
 		nrf_gpio_pin_set(LED_PIN);
 //		nrf_gpio_cfg_output(UART_TX);
 //		nrf_gpio_cfg_input(UART_RX, NRF_GPIO_PIN_NOPULL);
@@ -629,20 +630,6 @@ static void nrf_timer_handler(void *p_context) {
 #endif
 
 int main(void) {
-	// The EYSGJNZXX and EYSGJNZWY modules use a 32 MHz crystals
-#if MODULE_TRAMPA || MODULE_BUILTIN
-	NRF_CLOCK->XTALFREQ = 0xFFFFFF00;
-
-	// Start the external high frequency crystal
-	NRF_CLOCK->EVENTS_HFCLKSTARTED = 0;
-	NRF_CLOCK->TASKS_HFCLKSTART = 1;
-
-	// Wait for the external oscillator to start up
-	while (NRF_CLOCK->EVENTS_HFCLKSTARTED == 0) {}
-
-	nrf_gpio_cfg_output(LED_PIN);
-	nrf_gpio_pin_clear(LED_PIN);
-#endif
 
 	APP_TIMER_INIT(APP_TIMER_PRESCALER, APP_TIMER_OP_QUEUE_SIZE, false);
 	uart_init();
